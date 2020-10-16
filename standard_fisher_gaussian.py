@@ -9,7 +9,7 @@ class StandardFisherGaussian:
         self.sigma2 = sigma2
 
     # evaluate density
-    def pdf(x):
+    def pdf(self, x):
         # TODO: write down density function
         pass
 
