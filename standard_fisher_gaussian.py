@@ -11,7 +11,19 @@ class StandardFisherGaussian:
 	# evaluate density
 	def pdf(self, x):
 		# TODO: write down density function
-		pass
+		# nu is the order of the Modified Bessel Function of the first kind, see the sentence below "else"
+		nu = p/2-1
+		a = np.sqrt(np.inner(x,x))/sigma2
+		
+		# when x is at the origin (zero norm), evaluating the denominator of the density will result in zero but the limit exists 
+		# so the density function is continuous everywhere
+		if a == 0:
+			density = (2*math.pi*sigma2)**(-p/2)*math.exp(-1/(2*sigma2))
+		else:
+			density = 2**(nu)*gamma(p/2)*iv(nu,a)/(a**nu)*(2*math.pi*sigma2)**(-p/2)*math.exp(-(np.inner(x,x)+1)/(2*sigma2))
+			
+		return density
+		# pass
 
 	# sample
 	def sample(self, n):
