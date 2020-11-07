@@ -123,9 +123,9 @@ class PSCAGradients:
 		r_init = np.exp(np.random.normal())
 		sigma2_init = np.exp(np.random.normal())
 
-		self.gfg.V = V_init
-		self.gfg.c = c_init
-		self.gfg.r = r_init
+		self.gfg.V = V_true # V_init
+		self.gfg.c = c_true.astype("float32") # c_init
+		self.gfg.r = float(r_true) # r_init
 		self.gfg.sigma2 = sigma2_init
 
 		likelihood_trace = []
@@ -139,19 +139,19 @@ class PSCAGradients:
 			print("Iter: {}, likelihood: {}".format(iter_num, lik))
 
 			self.gfg.r += self.r_grad() * learning_rate
-			self.gfg.r = max(self.gfg.r, 1e-6)
+			self.gfg.r = max(self.gfg.r, 1e-1)
 			self.compute_useful_quantities()
 			self.gfg.c += self.c_grad() * learning_rate
 			self.compute_useful_quantities()
 			self.gfg.sigma2 += self.sigma2_grad() * learning_rate
 			self.compute_useful_quantities()
-			self.gfg.sigma2 = max(self.gfg.sigma2, 1e-6)
+			self.gfg.sigma2 = max(self.gfg.sigma2, 1e-1)
 			self.gfg.V += self.V_grad() * learning_rate
 			self.compute_useful_quantities()
 
 			# print(self.gfg.r)
 			# print(self.gfg.c)
-			# print(self.gfg.sigma2)
+			print(self.gfg.sigma2)
 			# print(self.gfg.V)
 
 			# print(self.r_grad())
@@ -174,8 +174,8 @@ if __name__ == "__main__":
 
 	n = 1000
 	D_true = 2
-	d_true = 1
-	r_true = 10
+	d_true = 2
+	r_true = 1
 	c_true = np.zeros(D_true)
 	sigma2_true = 1
 	# V = np.random.normal(size=(D, d))
@@ -184,13 +184,13 @@ if __name__ == "__main__":
 	# u, dvals, v = np.linalg.svd(V)
 	# V = u[:, :d]
 
-	V_true = np.array(
-		[[0],
-		[1]])
-
 	# V_true = np.array(
-	# 	[[1, 0],
-	# 	 [0, 1]])
+	# 	[[0.0],
+	# 	[1.0]])
+
+	V_true = np.array(
+		[[1, 0],
+		 [0, 1]]).astype("float32")
 
 	# Make sure it's close to orthogonal
 	np.testing.assert_array_almost_equal(V_true.T @ V_true, np.eye(d_true))
@@ -200,7 +200,7 @@ if __name__ == "__main__":
 	samples = gfg.sample(n=n)
 
 	grad_obj = PSCAGradients(X=samples, gfg=gfg)
-	grad_obj.gradient_descent(learning_rate=1, n_iter=1000)
+	grad_obj.gradient_descent(learning_rate=10, n_iter=200)
 
 	import matplotlib.pyplot as plt
 	plt.plot(grad_obj.likelihood_trace)
