@@ -5,7 +5,7 @@ from scipy.linalg import sqrtm
 class PCPCA:
 
     def __init__(self, n_components, gamma):
-        """Initialize IBFA model.
+        """Initialize PCPCA model.
         """
         self.k = n_components
         self.gamma = gamma
